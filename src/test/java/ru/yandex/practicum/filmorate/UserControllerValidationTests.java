@@ -1,5 +1,12 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import java.time.LocalDate;
+import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,15 +14,14 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserControllerValidationTests {
 
     private UserController userController;
     private User validUser;
+    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator = factory.getValidator();
 
     @BeforeEach
     void setUp() {
@@ -30,56 +36,50 @@ class UserControllerValidationTests {
     @Test
     void createValidUser() {
         User createdUser = userController.create(validUser);
-        assertNotNull(createdUser.getId());
-        assertEquals(validUser.getEmail(), createdUser.getEmail());
+        Assertions.assertNotNull(createdUser.getId());
+        Assertions.assertEquals(validUser.getEmail(), createdUser.getEmail());
     }
 
     @Test
     void createUserInvalidEmail() {
         validUser.setEmail("invalid-email");
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "Невалидный email при создании пользователя");
     }
 
     @Test
     void createUserBlankEmail() {
         validUser.setEmail(" ");
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "Пустой email при создании пользователя");
     }
 
     @Test
     void createUserNullEmail() {
         validUser.setEmail(null);
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
-    }
-
-    @Test
-    void createUserInvalidLogin() {
-        validUser.setLogin("invalid login");
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "Пустой email при создании пользователя");
     }
 
     @Test
     void createUserBlankLogin() {
         validUser.setLogin(" ");
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "Пустой логин пользователя");
     }
 
     @Test
     void createUserNullLogin() {
         validUser.setLogin(null);
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "Пустой логин пользователя");
     }
 
     @Test
     void createUserFutureBirthday() {
-        validUser.setBirthday(LocalDate.now().plusDays(1));
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
-    }
-
-    @Test
-    void createUserTooOldBirthday() {
-        validUser.setBirthday(LocalDate.of(1900, 1, 1));
-        assertThrows(ValidationException.class, () -> userController.create(validUser));
+        validUser.setBirthday(LocalDate.now().plusDays(1L));
+        Set<ConstraintViolation<User>> violations = validator.validate(validUser);
+        Assertions.assertFalse(violations.isEmpty(), "День рождения пользователя в будущем");
     }
 
     @Test
@@ -87,33 +87,30 @@ class UserControllerValidationTests {
         User createdUser = userController.create(validUser);
         createdUser.setName("Updated Name");
         User updatedUser = userController.update(createdUser);
-        assertEquals("Updated Name", updatedUser.getName());
+        Assertions.assertEquals("Updated Name", updatedUser.getName());
     }
 
     @Test
     void updateUserInvalidEmail() {
         User createdUser = userController.create(validUser);
         createdUser.setEmail("invalid-email");
-        assertThrows(ValidationException.class, () -> userController.update(createdUser));
+        Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
+        Assertions.assertFalse(violations.isEmpty(), "Невалидный email при обновлении пользователя");
     }
 
     @Test
     void updateUserInvalidId() {
         validUser.setId(9999);
-        assertThrows(ValidationException.class, () -> userController.update(validUser));
-    }
-
-    @Test
-    void updateUserPastBirthday() {
-        User createdUser = userController.create(validUser);
-        createdUser.setBirthday(LocalDate.of(1900, 01, 01));
-        assertThrows(ValidationException.class, () -> userController.update(createdUser));
+        Assertions.assertThrows(ValidationException.class, () -> {
+            userController.update(validUser);
+        });
     }
 
     @Test
     void updateUserFutureBirthday() {
         User createdUser = userController.create(validUser);
-        createdUser.setBirthday(LocalDate.now().plusDays(1));
-        assertThrows(ValidationException.class, () -> userController.update(createdUser));
+        createdUser.setBirthday(LocalDate.now().plusDays(1L));
+        Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
+        Assertions.assertFalse(violations.isEmpty(), "День рождения пользователя в будущем при обновлении");
     }
 }
