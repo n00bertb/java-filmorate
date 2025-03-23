@@ -26,6 +26,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительным числом!")
     @EqualsAndHashCode.Exclude
-    private int duration;
+    private Integer duration;
     private Set<Long> usersLike = new HashSet<>();
 }
