@@ -51,5 +51,4 @@ public class FilmController {
     public Collection<Film> getTopFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.findFilmsByTopLikes(count);
     }
-
 }

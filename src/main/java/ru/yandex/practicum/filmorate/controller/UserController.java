@@ -64,5 +64,4 @@ public class UserController {
         Set<User> commonFriends = userService.findCommonFriends(id, friendId);
         return ResponseEntity.ok().body(commonFriends);
     }
-
 }
