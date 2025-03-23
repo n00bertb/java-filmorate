@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate;
-/*
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -10,14 +10,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongReleaseDateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmServiceImpl;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 
 @SpringBootTest
 class FilmControllerValidationTests {
 
     private FilmController filmController;
+    private FilmServiceImpl filmService;
+    private FilmStorage filmStorage;
+    private UserStorage userStorage;
     private Film validFilm;
     private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -25,7 +35,10 @@ class FilmControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        //filmController = new FilmController();
+        userStorage = new InMemoryUserStorage();
+        filmStorage = new InMemoryFilmStorage(userStorage);
+        filmService = new FilmServiceImpl(filmStorage);
+        filmController = new FilmController(filmService);
         validFilm = new Film();
         validFilm.setName("Test Film");
         validFilm.setDescription("Test Description");
@@ -64,7 +77,7 @@ class FilmControllerValidationTests {
     @Test
     void createFilmWhenReleaseDateIsBeforeFilmBirthday() {
         validFilm.setReleaseDate(FILM_BIRTHDAY.minusDays(1L));
-        Assertions.assertThrows(ValidationException.class, () -> {
+        Assertions.assertThrows(WrongReleaseDateException.class, () -> {
             filmController.create(validFilm);
         });
     }
@@ -102,7 +115,7 @@ class FilmControllerValidationTests {
     @Test
     void updateFilmWhenIdIsInvalid() {
         validFilm.setId(9999L);
-        Assertions.assertThrows(ValidationException.class, () -> {
+        Assertions.assertThrows(NotFoundException.class, () -> {
             filmController.update(validFilm);
         });
     }
@@ -143,7 +156,7 @@ class FilmControllerValidationTests {
     void updateFilmWhenReleaseDateIsBeforeFilmBirthday() {
         Film createdFilm = filmController.create(validFilm);
         createdFilm.setReleaseDate(FILM_BIRTHDAY.minusDays(1L));
-        Assertions.assertThrows(ValidationException.class, () -> {
+        Assertions.assertThrows(WrongReleaseDateException.class, () -> {
             filmController.update(createdFilm);
         });
     }
@@ -164,5 +177,3 @@ class FilmControllerValidationTests {
         Assertions.assertFalse(violations.isEmpty(), "Продолжительность фильма равна нулю при обновлении");
     }
 }
-
- */

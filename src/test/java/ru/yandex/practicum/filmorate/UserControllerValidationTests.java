@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate;
-/*
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -11,20 +11,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.UserServiceImpl;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 @SpringBootTest
 class UserControllerValidationTests {
 
     private UserController userController;
+    private UserService userService;
+    private UserStorage userStorage;
     private User validUser;
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
     @BeforeEach
     void setUp() {
-        //userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserServiceImpl(userStorage);
+        userController = new UserController(userService);
         validUser = new User();
         validUser.setEmail("test@example.com");
         validUser.setLogin("testLogin");
@@ -100,7 +109,7 @@ class UserControllerValidationTests {
     @Test
     void updateUserInvalidId() {
         validUser.setId(9999L);
-        Assertions.assertThrows(ValidationException.class, () -> {
+        Assertions.assertThrows(NotFoundException.class, () -> {
             userController.update(validUser);
         });
     }
@@ -113,5 +122,3 @@ class UserControllerValidationTests {
         Assertions.assertFalse(violations.isEmpty(), "День рождения пользователя в будущем при обновлении");
     }
 }
-
-*/
