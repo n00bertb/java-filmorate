@@ -3,20 +3,15 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
-@Builder(toBuilder = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class Film {
     @EqualsAndHashCode.Include
-    private Long id;
+    private int id;
     @NotBlank(message = "Название не может быть пустым!")
     @EqualsAndHashCode.Exclude
     private String name;
@@ -28,5 +23,4 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом!")
     @EqualsAndHashCode.Exclude
     private int duration;
-    private Set<Long> usersLike = new HashSet<>();
 }

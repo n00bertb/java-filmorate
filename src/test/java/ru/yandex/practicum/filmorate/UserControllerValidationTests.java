@@ -25,7 +25,7 @@ class UserControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        //userController = new UserController();
+        userController = new UserController();
         validUser = new User();
         validUser.setEmail("test@example.com");
         validUser.setLogin("testLogin");
@@ -100,7 +100,7 @@ class UserControllerValidationTests {
 
     @Test
     void updateUserInvalidId() {
-        validUser.setId(9999L);
+        validUser.setId(9999);
         Assertions.assertThrows(ValidationException.class, () -> {
             userController.update(validUser);
         });

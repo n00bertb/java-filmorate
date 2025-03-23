@@ -12,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-
 import java.time.LocalDate;
 
 
@@ -21,7 +19,6 @@ import java.time.LocalDate;
 class FilmControllerValidationTests {
 
     private FilmController filmController;
-    private FilmService filmService;
     private Film validFilm;
     private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -29,7 +26,7 @@ class FilmControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        //filmController = new FilmController();
+        filmController = new FilmController();
         validFilm = new Film();
         validFilm.setName("Test Film");
         validFilm.setDescription("Test Description");
@@ -105,7 +102,7 @@ class FilmControllerValidationTests {
 
     @Test
     void updateFilmWhenIdIsInvalid() {
-        validFilm.setId(9999L);
+        validFilm.setId(9999);
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.update(validFilm);
         });
