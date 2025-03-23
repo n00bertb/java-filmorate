@@ -5,13 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import java.time.LocalDate;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @EqualsAndHashCode.Include
-    private int id;
+    private Long id;
     @NotBlank(message = "Электронная почта не может быть пустой!")
     @Email(message = "Введенный email не соответствует формату email-адресов!")
     @EqualsAndHashCode.Exclude
@@ -24,4 +27,5 @@ public class User {
     @Past(message = "Дата рождения не может быть в будущем!")
     @EqualsAndHashCode.Exclude
     private LocalDate birthday;
+    private Set<Long> friends = new HashSet<>();
 }

@@ -26,7 +26,7 @@ class FilmControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
+        //filmController = new FilmController();
         validFilm = new Film();
         validFilm.setName("Test Film");
         validFilm.setDescription("Test Description");
@@ -102,7 +102,7 @@ class FilmControllerValidationTests {
 
     @Test
     void updateFilmWhenIdIsInvalid() {
-        validFilm.setId(9999);
+        validFilm.setId(9999L);
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.update(validFilm);
         });
