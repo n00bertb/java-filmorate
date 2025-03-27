@@ -14,7 +14,7 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.service.UserServiceImpl;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -31,7 +31,7 @@ class UserControllerValidationTests {
     @BeforeEach
     void setUp() {
         userStorage = new InMemoryUserStorage();
-        userService = new UserServiceImpl(userStorage);
+        userService = new UserService(userStorage);
         userController = new UserController(userService);
         validUser = new User();
         validUser.setEmail("test@example.com");
@@ -42,7 +42,7 @@ class UserControllerValidationTests {
 
     @Test
     void createValidUser() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         Assertions.assertNotNull(createdUser.getId());
         Assertions.assertEquals(validUser.getEmail(), createdUser.getEmail());
     }
@@ -91,15 +91,15 @@ class UserControllerValidationTests {
 
     @Test
     void updateUserValidUser() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setName("Updated Name");
-        User updatedUser = userController.update(createdUser);
+        User updatedUser = userController.updateUser(createdUser);
         Assertions.assertEquals("Updated Name", updatedUser.getName());
     }
 
     @Test
     void updateUserInvalidEmail() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setEmail("invalid-email");
         Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
         Assertions.assertFalse(violations.isEmpty(), "Невалидный email при обновлении пользователя");
@@ -109,13 +109,13 @@ class UserControllerValidationTests {
     void updateUserInvalidId() {
         validUser.setId(9999L);
         Assertions.assertThrows(NotFoundException.class, () -> {
-            userController.update(validUser);
+            userController.updateUser(validUser);
         });
     }
 
     @Test
     void updateUserFutureBirthday() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setBirthday(LocalDate.now().plusDays(1L));
         Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
         Assertions.assertFalse(violations.isEmpty(), "День рождения пользователя в будущем при обновлении");
