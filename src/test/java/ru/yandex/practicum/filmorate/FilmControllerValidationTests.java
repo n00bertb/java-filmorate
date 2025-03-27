@@ -10,15 +10,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import java.time.LocalDate;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.validation.FilmValidator;
 
+import java.time.LocalDate;
 
 @SpringBootTest
 class FilmControllerValidationTests {
 
     private FilmController filmController;
+    private FilmService filmService;
+    private FilmStorage filmStorage;
+    private UserStorage userStorage;
+    private FilmValidator filmValidator;
     private Film validFilm;
     private static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -26,7 +37,11 @@ class FilmControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
+        userStorage = new InMemoryUserStorage();
+        filmStorage = new InMemoryFilmStorage();
+        filmValidator = new FilmValidator();
+        filmService = new FilmService(filmStorage,userStorage,filmValidator);
+        filmController = new FilmController(filmService);
         validFilm = new Film();
         validFilm.setName("Test Film");
         validFilm.setDescription("Test Description");
@@ -102,8 +117,8 @@ class FilmControllerValidationTests {
 
     @Test
     void updateFilmWhenIdIsInvalid() {
-        validFilm.setId(9999);
-        Assertions.assertThrows(ValidationException.class, () -> {
+        validFilm.setId(9999L);
+        Assertions.assertThrows(NotFoundException.class, () -> {
             filmController.update(validFilm);
         });
     }

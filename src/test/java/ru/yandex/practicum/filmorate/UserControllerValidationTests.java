@@ -11,21 +11,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 @SpringBootTest
 class UserControllerValidationTests {
 
     private UserController userController;
+    private UserService userService;
+    private UserStorage userStorage;
     private User validUser;
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        userController = new UserController(userService);
         validUser = new User();
         validUser.setEmail("test@example.com");
         validUser.setLogin("testLogin");
@@ -35,7 +41,7 @@ class UserControllerValidationTests {
 
     @Test
     void createValidUser() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         Assertions.assertNotNull(createdUser.getId());
         Assertions.assertEquals(validUser.getEmail(), createdUser.getEmail());
     }
@@ -84,15 +90,15 @@ class UserControllerValidationTests {
 
     @Test
     void updateUserValidUser() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setName("Updated Name");
-        User updatedUser = userController.update(createdUser);
+        User updatedUser = userController.updateUser(createdUser);
         Assertions.assertEquals("Updated Name", updatedUser.getName());
     }
 
     @Test
     void updateUserInvalidEmail() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setEmail("invalid-email");
         Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
         Assertions.assertFalse(violations.isEmpty(), "Невалидный email при обновлении пользователя");
@@ -100,15 +106,15 @@ class UserControllerValidationTests {
 
     @Test
     void updateUserInvalidId() {
-        validUser.setId(9999);
-        Assertions.assertThrows(ValidationException.class, () -> {
-            userController.update(validUser);
+        validUser.setId(9999L);
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            userController.updateUser(validUser);
         });
     }
 
     @Test
     void updateUserFutureBirthday() {
-        User createdUser = userController.create(validUser);
+        User createdUser = userController.createUser(validUser);
         createdUser.setBirthday(LocalDate.now().plusDays(1L));
         Set<ConstraintViolation<User>> violations = validator.validate(createdUser);
         Assertions.assertFalse(violations.isEmpty(), "День рождения пользователя в будущем при обновлении");
