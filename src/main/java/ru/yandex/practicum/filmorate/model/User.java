@@ -1,17 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import java.time.LocalDate;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@NotNull(message = "user не должен быть равен null.")
 public class User {
     @EqualsAndHashCode.Include
-    private int id;
+    private Long id;
     @NotBlank(message = "Электронная почта не может быть пустой!")
     @Email(message = "Введенный email не соответствует формату email-адресов!")
     @EqualsAndHashCode.Exclude
@@ -24,4 +27,5 @@ public class User {
     @Past(message = "Дата рождения не может быть в будущем!")
     @EqualsAndHashCode.Exclude
     private LocalDate birthday;
+    private final Set<Long> friends = new HashSet<>();
 }
