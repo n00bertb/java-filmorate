@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.dal.dao.FilmStorage;
 
 import java.util.*;
 
@@ -11,51 +12,51 @@ import java.util.*;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final FilmService filmService;
+    private final FilmStorage filmStorage;
 
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
+    public FilmController(FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
     }
 
     @GetMapping
     public List<Film> getAllFilms() {
-        return filmService.getAllFilms();
+        return filmStorage.findAllFilms();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        return filmService.createFilm(film);
+        return filmStorage.createFilm(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        return filmService.updateFilm(film);
+        return filmStorage.updateFilm(film);
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") final Long id) {
-        return filmService.getFilmById(id);
+        return filmStorage.findFilmById(id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteFilmById(@PathVariable("id") final Long id) {
-        filmService.deleteFilm(id);
+        filmStorage.deleteFilm(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable("id") final Long filmId,
                         @PathVariable("userId") final Long userId) {
-        filmService.likeFilm(filmId, userId);
+        filmStorage.putLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void dislikeFilm(@PathVariable("id") final Long filmId,
                            @PathVariable("userId") final Long userId) {
-        filmService.dislikeFilm(filmId, userId);
+        filmStorage.deleteLike(filmId, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getTopFilms(@RequestParam(name = "count", defaultValue = "10") final Integer count) {
-        return filmService.getTopFilms(count);
+        return filmStorage.getBestFilm(count);
     }
 }

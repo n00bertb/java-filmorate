@@ -14,11 +14,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.FilmValidator;
+import ru.yandex.practicum.filmorate.dal.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dal.dao.UserStorage;
 
 import java.time.LocalDate;
 
@@ -37,11 +35,11 @@ class FilmControllerValidationTests {
 
     @BeforeEach
     void setUp() {
-        userStorage = new InMemoryUserStorage();
-        filmStorage = new InMemoryFilmStorage();
+        //userStorage = new InMemoryUserStorage();
+        //filmStorage = new InMemoryFilmStorage();
         filmValidator = new FilmValidator();
-        filmService = new FilmService(filmStorage,userStorage,filmValidator);
-        filmController = new FilmController(filmService);
+        //filmService = new FilmService(filmStorage,userStorage,filmValidator);
+        filmController = new FilmController(filmStorage);
         validFilm = new Film();
         validFilm.setName("Test Film");
         validFilm.setDescription("Test Description");
