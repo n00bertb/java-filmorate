@@ -45,8 +45,8 @@ class FilmStorageTest {
                 .satisfies(filmList -> {
                     Film firstFilm = filmList.iterator().next();
                     assertThat(firstFilm)
-                            .hasFieldOrPropertyWithValue("id", 1)
-                            .hasFieldOrPropertyWithValue("name", "филосовский камень");
+                            .hasFieldOrPropertyWithValue("id", 1L)
+                            .hasFieldOrPropertyWithValue("name", "Филосовский камень");
                 });
     }
 
@@ -54,7 +54,7 @@ class FilmStorageTest {
     @DisplayName("Should create new film")
     void createTest() {
         Film newFilm = new Film();
-        newFilm.setName("проклятое дитя");
+        newFilm.setName("Проклятое дитя");
         newFilm.setDescription("description8");
         newFilm.setReleaseDate(LocalDate.of(2022, 1, 1));
         newFilm.setDuration(128);
@@ -63,7 +63,7 @@ class FilmStorageTest {
         Film createFilm = filmStorage.createFilm(newFilm);
 
         assertThat(createFilm).hasFieldOrPropertyWithValue("id", 8L);
-        assertThat(createFilm).hasFieldOrPropertyWithValue("name", "проклятое дитя");
+        assertThat(createFilm).hasFieldOrPropertyWithValue("name", "Проклятое дитя");
         assertThat(createFilm).hasFieldOrPropertyWithValue("description", "description8");
         assertThat(createFilm).hasFieldOrPropertyWithValue("duration", 128);
         assertThat(createFilm).hasFieldOrPropertyWithValue("releaseDate",
@@ -76,7 +76,7 @@ class FilmStorageTest {
     void updateTest() {
         Film newFilm = new Film();
         newFilm.setId(8L);
-        newFilm.setName("фантастические твари");
+        newFilm.setName("Фантастические твари");
         newFilm.setDescription("description8");
         newFilm.setReleaseDate(LocalDate.of(2001, 11, 22));
         newFilm.setDuration(121);
@@ -105,8 +105,8 @@ class FilmStorageTest {
         void getByIdTest() {
             Film film = filmStorage.findFilmById(1L);
 
-            assertThat(film).hasFieldOrPropertyWithValue("id", 1);
-            assertThat(film).hasFieldOrPropertyWithValue("name", "филосовский камень");
+            assertThat(film).hasFieldOrPropertyWithValue("id", 1L);
+            assertThat(film).hasFieldOrPropertyWithValue("name", "Филосовский камень");
             assertThat(film).hasFieldOrPropertyWithValue("description", "description1");
             assertThat(film).hasFieldOrPropertyWithValue("duration", 121);
             assertThat(film).hasFieldOrPropertyWithValue("releaseDate",
@@ -137,7 +137,7 @@ class FilmStorageTest {
             assertThat(bestFilms)
                     .isNotEmpty()
                     .anySatisfy(film ->
-                            assertThat(film).hasFieldOrPropertyWithValue("id", 1));
+                            assertThat(film).hasFieldOrPropertyWithValue("id", 1L));
         }
 
         @Test

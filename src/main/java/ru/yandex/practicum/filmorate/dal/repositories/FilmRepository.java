@@ -21,5 +21,5 @@ public interface FilmRepository {
 
     List<Film> getBestFilm(int count);
 
-    List<Integer> getAllId();
+    List<Long> getAllId();
 }

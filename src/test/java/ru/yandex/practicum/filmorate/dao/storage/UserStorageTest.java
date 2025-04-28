@@ -31,10 +31,10 @@ public class UserStorageTest {
     @DisplayName("UserRepository_findById")
     void findByIdTest() {
         User user = userStorage.findUserById(1L);
-        assertThat(user).hasFieldOrPropertyWithValue("id", 1);
-        assertThat(user).hasFieldOrPropertyWithValue("login", "уизли");
-        assertThat(user).hasFieldOrPropertyWithValue("name", "рон");
-        assertThat(user).hasFieldOrPropertyWithValue("email", "гриффиндор@mail.ru");
+        assertThat(user).hasFieldOrPropertyWithValue("id", 1L);
+        assertThat(user).hasFieldOrPropertyWithValue("login", "antuan");
+        assertThat(user).hasFieldOrPropertyWithValue("name", "Антуан");
+        assertThat(user).hasFieldOrPropertyWithValue("email", "antuangrad@mail.ru");
         assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1993, 3, 12));
     }
 
@@ -45,14 +45,14 @@ public class UserStorageTest {
         Collection<User> users = userStorage.findAllUsers();
         assertThat(users).isNotEmpty();
         assertThat(users).hasSize(4);
-        assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 1);
-        assertThat(users).element(0).hasFieldOrPropertyWithValue("name", "рон");
-        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 2);
-        assertThat(users).element(1).hasFieldOrPropertyWithValue("name", "невелл");
-        assertThat(users).element(2).hasFieldOrPropertyWithValue("id", 3);
-        assertThat(users).element(2).hasFieldOrPropertyWithValue("name", "винсент");
-        assertThat(users).element(3).hasFieldOrPropertyWithValue("id", 4);
-        assertThat(users).element(3).hasFieldOrPropertyWithValue("name", "седрик");
+        assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 1L);
+        assertThat(users).element(0).hasFieldOrPropertyWithValue("name", "Антуан");
+        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 2L);
+        assertThat(users).element(1).hasFieldOrPropertyWithValue("name", "Сергей");
+        assertThat(users).element(2).hasFieldOrPropertyWithValue("id", 3L);
+        assertThat(users).element(2).hasFieldOrPropertyWithValue("name", "Василий");
+        assertThat(users).element(3).hasFieldOrPropertyWithValue("id", 4L);
+        assertThat(users).element(3).hasFieldOrPropertyWithValue("name", "Павел");
     }
 
     @Test
@@ -60,19 +60,19 @@ public class UserStorageTest {
     @DisplayName("UserRepository_create")
     void createTest() {
         User newUser = new User();
-        newUser.setLogin("frodo_f");
-        newUser.setName("Фродо");
-        newUser.setEmail("frodoNew@middleearth.com");
-        newUser.setBirthday(LocalDate.of(1980, 9, 22));
+        newUser.setLogin("anastasia_b");
+        newUser.setName("Настя");
+        newUser.setEmail("anastasia_b@mail.ru");
+        newUser.setBirthday(LocalDate.of(1987, 9, 22));
 
 
         User user = userStorage.createUser(newUser);
 
         assertThat(user).hasFieldOrPropertyWithValue("id", newUser.getId());
-        assertThat(user).hasFieldOrPropertyWithValue("login", "frodo_f");
-        assertThat(user).hasFieldOrPropertyWithValue("name", "Фродо");
-        assertThat(user).hasFieldOrPropertyWithValue("email", "frodoNew@middleearth.com");
-        assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1980, 9, 22));
+        assertThat(user).hasFieldOrPropertyWithValue("login", "anastasia_b");
+        assertThat(user).hasFieldOrPropertyWithValue("name", "Настя");
+        assertThat(user).hasFieldOrPropertyWithValue("email", "anastasia_b@mail.ru");
+        assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1987, 9, 22));
     }
 
     @Test
@@ -81,19 +81,19 @@ public class UserStorageTest {
     void updateTest() {
         User newUser = new User();
         newUser.setId(1L); // Используйте существующее значение id
-        newUser.setLogin("frodo_b");
-        newUser.setName("Фродо Бэггинс");
-        newUser.setEmail("frodo@shire.com");
-        newUser.setBirthday(LocalDate.of(1980, 9, 22));
+        newUser.setLogin("anastasia_ba");
+        newUser.setName("Настя Балдина");
+        newUser.setEmail("anastasia_ba87@mail.ru");
+        newUser.setBirthday(LocalDate.of(1987, 9, 22));
 
         User updatedUser = userStorage.updateUser(newUser);
         User user = userStorage.updateUser(newUser);
 
         assertThat(user).hasFieldOrPropertyWithValue("id", updatedUser.getId());
-        assertThat(user).hasFieldOrPropertyWithValue("login", "frodo_b");
-        assertThat(user).hasFieldOrPropertyWithValue("name", "Фродо Бэггинс");
-        assertThat(user).hasFieldOrPropertyWithValue("email", "frodo@shire.com");
-        assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1980, 9, 22));
+        assertThat(user).hasFieldOrPropertyWithValue("login", "anastasia_ba");
+        assertThat(user).hasFieldOrPropertyWithValue("name", "Настя Балдина");
+        assertThat(user).hasFieldOrPropertyWithValue("email", "anastasia_ba87@mail.ru");
+        assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1987, 9, 22));
     }
 
     @Test
@@ -103,8 +103,8 @@ public class UserStorageTest {
         List<User> users = userStorage.getAllFriends(1L);
         assertThat(users).isNotEmpty();
         assertThat(users).hasSize(2);
-        assertThat(users).first().hasFieldOrPropertyWithValue("id", 2);
-        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 3);
+        assertThat(users).first().hasFieldOrPropertyWithValue("id", 2L);
+        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 3L);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class UserStorageTest {
         List<User> users = userStorage.getMutualFriends(2L, 3L);
         assertThat(users).isNotEmpty();
         assertThat(users).hasSize(2);
-        assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 1);
-        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 4);
+        assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 1L);
+        assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 4L);
     }
 }

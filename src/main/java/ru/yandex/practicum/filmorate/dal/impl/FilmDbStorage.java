@@ -11,9 +11,9 @@ import ru.yandex.practicum.filmorate.dal.repositories.GenreRepository;
 import ru.yandex.practicum.filmorate.dal.repositories.MpaRepository;
 import ru.yandex.practicum.filmorate.dal.repositories.UserRepository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.validation.FilmValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,6 +28,7 @@ public class FilmDbStorage implements FilmStorage {
     UserRepository userRepository;
     GenreRepository genreRepository;
     MpaRepository mpaRepository;
+    FilmValidator filmValidator;
 
     public Film findFilmById(final Long id) {
         log.info("Запрос на получение фильма с id = {}", id);
@@ -48,6 +49,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public Film createFilm(final Film film) {
         log.info("Запрос на добавление нового фильма");
+        filmValidator.validReleaseDate(film);
         Film filmGenre = validAndAddMpaGenres(film);
         log.info("Запрос на добавление нового фильма в репозиторий");
         Film newFilm = filmRepository.create(filmGenre);
@@ -118,7 +120,7 @@ public class FilmDbStorage implements FilmStorage {
         if (Objects.nonNull(film.getMpa())) {
             log.info("Проверка на корректность введенного к фильму mpa");
             film.setMpa(mpaRepository.findById(film.getMpa().getId())
-                    .orElseThrow(() -> new ValidationException("В приложении не предусмотрено такое mpa")));
+                    .orElseThrow(() -> new NotFoundException("В приложении не предусмотрено такое mpa")));
         }
 
         if (Objects.nonNull(film.getGenres())) {
@@ -132,7 +134,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.setGenres(genres);
             } else {
                 log.warn("Передан несуществующий жанр");
-                throw new ValidationException("Передан несуществующий жанр");
+                throw new NotFoundException("Передан несуществующий жанр");
             }
         }
 

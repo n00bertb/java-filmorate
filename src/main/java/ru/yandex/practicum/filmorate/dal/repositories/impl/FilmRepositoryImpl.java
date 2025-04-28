@@ -130,8 +130,8 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public List<Integer> getAllId() {
-        return jdbcTemplate.query("SELECT film_id FROM films; ", (rs, rowNum) -> rs.getInt("film_id"));
+    public List<Long> getAllId() {
+        return jdbcTemplate.query("SELECT film_id FROM films; ", (rs, rowNum) -> rs.getLong("film_id"));
     }
 
     private void addGenres(final Long filmId, final Set<Genre> genres) {
