@@ -66,7 +66,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> findCommonFriends(@PathVariable("id") final Long userId,
-                                            @PathVariable("otherId") final Long otherId) {
+                                        @PathVariable("otherId") final Long otherId) {
         return userStorage.getMutualFriends(userId, otherId);
     }
 }

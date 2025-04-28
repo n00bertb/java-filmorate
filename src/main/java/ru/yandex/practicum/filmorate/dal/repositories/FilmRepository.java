@@ -17,6 +17,7 @@ public interface FilmRepository {
     void putLike(Long id, Long userId);
 
     void deleteLike(Long id, Long userId);
+
     void deleteFilm(Long id);
 
     List<Film> getBestFilm(int count);
