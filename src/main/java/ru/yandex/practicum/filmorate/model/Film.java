@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.LinkedHashSet;
 
 @Data
 @Builder(toBuilder = true)
@@ -31,4 +32,7 @@ public class Film {
     @EqualsAndHashCode.Exclude
     private Integer duration;
     private final Set<Long> usersLike = new HashSet<>();
+    @NotNull
+    Mpa mpa;
+    LinkedHashSet<Genre> genres = new LinkedHashSet<>();
 }
